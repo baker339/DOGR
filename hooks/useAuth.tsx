@@ -23,6 +23,30 @@ function useProvideAuth() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  const checkAndCreateUser = async (userId: string, name: string) => {
+    try {
+      const response = await fetch(`/api/users/${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.status === 404) {
+        // User does not exist, create a new user record
+        await fetch(`/api/users/${userId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId, name }), // Add any additional user data as needed
+        });
+      }
+    } catch (error) {
+      console.error("Error checking/creating user:", error);
+    }
+  };
+
   const signinWithGoogle = () => {
     const provider = new GoogleAuthProvider();
     return signInWithPopup(auth, provider)
@@ -52,6 +76,7 @@ function useProvideAuth() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
+        checkAndCreateUser(user.uid, user.displayName || "Anonymous");
       } else {
         setUser(null);
       }

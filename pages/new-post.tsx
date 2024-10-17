@@ -38,29 +38,29 @@ export default function NewPost() {
     }
   };
 
-  const handleGetLocation = async () => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        const { latitude, longitude } = position.coords;
+  //   const handleGetLocation = async () => {
+  //     if ("geolocation" in navigator) {
+  //       navigator.geolocation.getCurrentPosition(async (position) => {
+  //         const { latitude, longitude } = position.coords;
 
-        // Example reverse geocoding using a public API
-        const response = await fetch(
-          `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=YOUR_API_KEY`
-        );
-        const data = await response.json();
+  //         // Example reverse geocoding using a public API
+  //         const response = await fetch(
+  //           `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=YOUR_API_KEY`
+  //         );
+  //         const data = await response.json();
 
-        // Check if there are results and set the location
-        if (data.results.length > 0) {
-          const location = data.results[0].formatted_address;
-          setNewPost((prev) => ({ ...prev, location }));
-        } else {
-          alert("Unable to retrieve location");
-        }
-      });
-    } else {
-      alert("Geolocation is not supported by your browser.");
-    }
-  };
+  //         // Check if there are results and set the location
+  //         if (data.results.length > 0) {
+  //           const location = data.results[0].formatted_address;
+  //           setNewPost((prev) => ({ ...prev, location }));
+  //         } else {
+  //           alert("Unable to retrieve location");
+  //         }
+  //       });
+  //     } else {
+  //       alert("Geolocation is not supported by your browser.");
+  //     }
+  //   };
 
   useEffect(() => {
     if (!loading && !user) {
@@ -112,6 +112,7 @@ export default function NewPost() {
           >
             {newPost.location || "Get Current Location"}
           </button> */}
+          <div>Hot Dogs Consumed</div>
           <input
             type="number"
             name="hotDogsConsumed"

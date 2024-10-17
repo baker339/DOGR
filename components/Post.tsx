@@ -1,5 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface PostProps {
   post: any;
@@ -10,6 +10,21 @@ const Post = ({ post }: PostProps) => {
   const [likes, setLikes] = useState(post?.likes?.length ?? 0);
   const [comments, setComments] = useState(post?.comments ?? []);
   const [newComment, setNewComment] = useState("");
+  const [posterName, setPosterName] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      try {
+        const response = await fetch(`/api/users/${post.userId}`); // Fetch the user by userId
+        const userData = await response.json();
+        setPosterName(userData.name); // Set the poster's name
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserName();
+  }, [post.userId]);
 
   const handleLike = async () => {
     try {
@@ -22,7 +37,8 @@ const Post = ({ post }: PostProps) => {
       });
 
       const updatedPost = await response.json();
-      setLikes(updatedPost.likes.length);
+      console.log({ updatedPost });
+      setLikes(updatedPost.likes?.length ?? 0);
     } catch (error) {
       console.error("Error liking post", error);
     }
@@ -67,6 +83,10 @@ const Post = ({ post }: PostProps) => {
         <p className="text-neutral text-sm mb-2">
           Hot Dogs Consumed: {post.hotDogsConsumed}
         </p>
+        {/* Display the poster's name */}
+        {posterName && (
+          <p className="text-neutral text-sm mb-2">Posted by: {posterName}</p>
+        )}
 
         {/* Like Button */}
         <button

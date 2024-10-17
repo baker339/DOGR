@@ -1,6 +1,8 @@
+// Layout.tsx
+
 import React, { ReactNode } from "react";
 import { useRouter } from "next/router"; // Importing useRouter from Next.js
-import { FaHome, FaPlusCircle, FaUser } from "react-icons/fa"; // Importing icons from react-icons
+import { FaHome, FaPlusCircle, FaUser, FaMedal } from "react-icons/fa"; // Importing icons from react-icons
 import { useAuth } from "@/hooks/useAuth";
 import Login from "@/pages/login";
 
@@ -47,6 +49,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               onClick={() => router.push("/new-post")}
             >
               <FaPlusCircle className="w-6 h-6" />
+            </div>
+
+            <div
+              className="flex flex-col items-center cursor-pointer"
+              onClick={() => router.push("/leaderboard")}
+            >
+              <FaMedal className="w-6 h-6" />
             </div>
 
             <div

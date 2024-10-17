@@ -11,6 +11,8 @@ export default async function handler(
   const { id } = req.query; // Post ID
   const { userId } = req.body; // User who liked the post
 
+  console.log({ method, id, userId });
+
   const client = await clientPromise;
   const db = client.db("dogrdb");
 
@@ -25,7 +27,8 @@ export default async function handler(
       }
 
       // Check if the user has already liked the post
-      const hasLiked = post.likes.includes(userId);
+      const likes: string[] = post.likes;
+      const hasLiked = likes.includes(userId);
 
       if (hasLiked) {
         // Remove the like
@@ -49,8 +52,10 @@ export default async function handler(
         .collection("posts")
         .findOne({ _id: new ObjectId(id as string) });
       res.status(200).json(updatedPost);
-    } catch (error) {
-      res.status(500).json({ message: "Error liking post" });
+    } catch (error: any) {
+      res
+        .status(500)
+        .json({ message: "Error liking post", error: error.toString() });
     }
   } else {
     res.setHeader("Allow", ["POST"]);

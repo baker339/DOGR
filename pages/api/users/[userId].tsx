@@ -24,6 +24,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       // Create a new user
       const newUser = {
         userId: req.body.userId,
+        name: req.body.name,
         createdAt: new Date(),
         // Add any additional fields you want to store
       };
