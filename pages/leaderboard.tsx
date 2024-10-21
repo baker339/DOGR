@@ -13,6 +13,13 @@ interface User {
 interface Post {
   userId: string;
   hotDogsConsumed: number;
+  createdAt: Date;
+}
+
+enum FilterType {
+  MONTH_TO_DATE = "month",
+  YEAR_TO_DATE = "year",
+  ALL_TIME = "all-time",
 }
 
 export default function Leaderboard() {
@@ -22,6 +29,9 @@ export default function Leaderboard() {
   const [leaderboard, setLeaderboard] = useState<
     { user: User; hotDogsConsumed: number }[]
   >([]);
+  const [filterType, setFilterType] = useState<FilterType>(
+    FilterType.YEAR_TO_DATE
+  );
 
   // Fetch users and posts when component mounts
   useEffect(() => {
@@ -54,8 +64,30 @@ export default function Leaderboard() {
   // Update leaderboard when users and posts are fetched
   useEffect(() => {
     if (users.length > 0 && posts.length > 0) {
+      let filteredPosts: Post[];
+      switch (filterType) {
+        case FilterType.YEAR_TO_DATE:
+          filteredPosts = posts.filter((post) => {
+            return (
+              new Date(post.createdAt).getFullYear() ===
+              new Date().getFullYear()
+            );
+          });
+          break;
+        case FilterType.MONTH_TO_DATE:
+          filteredPosts = posts.filter(
+            (post) =>
+              new Date(post.createdAt).getFullYear() ===
+                new Date().getFullYear() &&
+              new Date(post.createdAt).getMonth() === new Date().getMonth()
+          );
+          break;
+        default:
+          filteredPosts = posts;
+          break;
+      }
       const leaderboardData = users.map((user) => {
-        const hotDogsConsumed = posts
+        const hotDogsConsumed = filteredPosts
           .filter((post) => post.userId === user.userId)
           .reduce(
             (sum: number, post) =>
@@ -72,7 +104,7 @@ export default function Leaderboard() {
       );
       setLeaderboard(sortedLeaderboard);
     }
-  }, [users, posts]);
+  }, [users, posts, filterType]);
 
   if (loading) {
     return <div>Loading...</div>; // Show a loading spinner or message while auth is loading
@@ -83,6 +115,18 @@ export default function Leaderboard() {
   return (
     <div className="flex flex-col min-h-screen bg-background p-4">
       <h1 className="text-3xl font-bold mb-6">Leaderboard</h1>
+      {/* Filter Selection */}
+      <div className="mb-4">
+        <select
+          value={filterType}
+          onChange={(e) => setFilterType(e.target.value as FilterType)}
+          className="p-2 bg-white border border-gray-300 rounded"
+        >
+          <option value={FilterType.MONTH_TO_DATE}>Month to Date</option>
+          <option value={FilterType.YEAR_TO_DATE}>Year to Date</option>
+          <option value={FilterType.ALL_TIME}>All Time</option>
+        </select>
+      </div>
       <table className="w-full table-auto">
         <thead>
           <tr className="text-left bg-gray-200">
