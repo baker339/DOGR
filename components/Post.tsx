@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 
 interface PostProps {
   post: any;
+  onDelete: (postId: string) => void;
 }
 
-const Post = ({ post }: PostProps) => {
+const Post = ({ post, onDelete }: PostProps) => {
   const { user } = useAuth();
   const [likes, setLikes] = useState(post?.likes?.length ?? 0);
   const [comments, setComments] = useState(post?.comments ?? []);
@@ -61,6 +62,21 @@ const Post = ({ post }: PostProps) => {
       setNewComment(""); // Clear the input
     } catch (error) {
       console.error("Error commenting on post", error);
+    }
+  };
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`/api/posts/${post._id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        onDelete(post._id); // Notify parent component to remove the post from the list
+      } else {
+        console.error("Failed to delete post");
+      }
+    } catch (error) {
+      console.error("Error deleting post", error);
     }
   };
 
@@ -140,6 +156,15 @@ const Post = ({ post }: PostProps) => {
             </button>
           </form>
         </div>
+        {/* Delete Button */}
+        {post.userId === user.uid && (
+          <button
+            onClick={handleDelete}
+            className="bg-red-500 text-white p-2 mt-4 rounded-lg hover:bg-red-600 transition-colors duration-200"
+          >
+            Delete Post
+          </button>
+        )}
       </div>
     </div>
   );

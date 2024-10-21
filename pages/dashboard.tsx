@@ -33,6 +33,11 @@ export default function Dashboard() {
     }
   };
 
+  const handleDeletePost = (postId: string) => {
+    // Filter out the deleted post from the list
+    setPosts(posts.filter((post) => post._id !== postId));
+  };
+
   if (loading) {
     return <div>Loading...</div>; // Show a loading spinner or message while auth is loading
   }
@@ -50,7 +55,9 @@ export default function Dashboard() {
             totalCount={posts.length}
             itemContent={(index) => {
               const post = posts[index];
-              return <Post key={post._id} post={post} />;
+              return (
+                <Post key={post._id} post={post} onDelete={handleDeletePost} />
+              );
             }}
           />
         </section>

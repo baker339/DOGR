@@ -27,6 +27,11 @@ export default async function handler(
       }
 
       // Check if the user has already liked the post
+      // Ensure likes is initialized as an array
+      if (!Array.isArray(post.likes)) {
+        post.likes = [];
+      }
+
       const likes: string[] = post.likes;
       const hasLiked = likes.includes(userId);
 
