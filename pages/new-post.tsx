@@ -1,5 +1,3 @@
-// pages/new-post.tsx
-
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
@@ -8,11 +6,13 @@ export default function NewPost() {
   const { user, loading } = useAuth();
   const [newPost, setNewPost] = useState({
     title: "",
-    // imageUrl: "", // Commented out for now
+    imageUrl: "",
     caption: "",
     location: "",
-    hotDogsConsumed: 0, // New field for hot dogs consumed
+    hotDogsConsumed: 0,
   });
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const router = useRouter();
 
   const handlePostChange = (
@@ -24,43 +24,67 @@ export default function NewPost() {
 
   const handlePostSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    let imageUrl = "";
     try {
-      await fetch("/api/posts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: user.uid, ...newPost }),
-      });
-      router.push("/dashboard"); // Redirect back to dashboard after post
+      if (image) {
+        let base64Img = await getBase64(image);
+        if (typeof base64Img === "string") {
+          base64Img = base64Img.replace(/^data:.+base64,/, "");
+        }
+        const response = await fetch("/api/image", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ image: base64Img }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Error response from API:", errorData);
+          throw new Error("Failed to upload image.");
+        }
+
+        const data = await response.json();
+        imageUrl = data.data.link;
+
+        await fetch("/api/posts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId: user.uid, ...newPost, imageUrl }),
+        });
+        router.push("/dashboard");
+      }
     } catch (error) {
-      console.error("Failed to create post", error);
+      console.log({ error });
     }
   };
 
-  //   const handleGetLocation = async () => {
-  //     if ("geolocation" in navigator) {
-  //       navigator.geolocation.getCurrentPosition(async (position) => {
-  //         const { latitude, longitude } = position.coords;
+  const getBase64 = (file: File): Promise<string | ArrayBuffer | null> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
 
-  //         // Example reverse geocoding using a public API
-  //         const response = await fetch(
-  //           `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=YOUR_API_KEY`
-  //         );
-  //         const data = await response.json();
-
-  //         // Check if there are results and set the location
-  //         if (data.results.length > 0) {
-  //           const location = data.results[0].formatted_address;
-  //           setNewPost((prev) => ({ ...prev, location }));
-  //         } else {
-  //           alert("Unable to retrieve location");
-  //         }
-  //       });
-  //     } else {
-  //       alert("Geolocation is not supported by your browser.");
-  //     }
-  //   };
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : null;
+    if (file) {
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file); // Ensure to read the file here
+    } else {
+      setImage(null);
+      setImagePreview(null);
+    }
+  };
 
   useEffect(() => {
     if (!loading && !user) {
@@ -88,15 +112,32 @@ export default function NewPost() {
             className="w-full p-2 border border-light-neutral rounded-lg focus:border-emerald focus:outline-none"
             required
           />
-          {/* <input
-            type="text"
-            name="imageUrl"
-            placeholder="Image URL"
-            value={newPost.imageUrl}
-            onChange={handlePostChange}
-            className="w-full p-2 border border-light-neutral rounded-lg focus:border-emerald focus:outline-none"
-            required
-          /> */}
+          {/* Custom File Input Button */}
+          <label className="flex items-center justify-center w-full cursor-pointer bg-primary text-white py-2 rounded-lg hover:bg-secondary transition">
+            {!imagePreview ? "Upload Hot Dog Image" : "Choose different Image"}
+            <input
+              type="file"
+              onChange={handleImageChange}
+              accept="image/*"
+              className="hidden"
+            />
+          </label>
+          {imagePreview && (
+            <div
+              className="mt-4 cursor-pointer"
+              onClick={() =>
+                document
+                  .querySelector<HTMLInputElement>('input[type="file"]')
+                  ?.click()
+              }
+            >
+              <img
+                src={imagePreview}
+                alt="Selected preview"
+                className="w-full h-64 object-cover rounded-lg shadow-md"
+              />
+            </div>
+          )}
           <textarea
             name="caption"
             placeholder="Caption"
@@ -105,13 +146,6 @@ export default function NewPost() {
             className="w-full p-2 border border-light-neutral rounded-lg focus:border-emerald focus:outline-none"
             required
           />
-          {/* <button
-            type="button"
-            onClick={handleGetLocation}
-            className="w-full bg-primary text-white py-2 rounded-lg hover:bg-secondary transition"
-          >
-            {newPost.location || "Get Current Location"}
-          </button> */}
           <div>Hot Dogs Consumed</div>
           <input
             type="number"

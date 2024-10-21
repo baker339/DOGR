@@ -16,9 +16,9 @@ const Post = ({ post, onDelete }: PostProps) => {
   useEffect(() => {
     const fetchUserName = async () => {
       try {
-        const response = await fetch(`/api/users/${post.userId}`); // Fetch the user by userId
+        const response = await fetch(`/api/users/${post.userId}`);
         const userData = await response.json();
-        setPosterName(userData.name); // Set the poster's name
+        setPosterName(userData.name);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -38,7 +38,6 @@ const Post = ({ post, onDelete }: PostProps) => {
       });
 
       const updatedPost = await response.json();
-      console.log({ updatedPost });
       setLikes(updatedPost.likes?.length ?? 0);
     } catch (error) {
       console.error("Error liking post", error);
@@ -59,11 +58,12 @@ const Post = ({ post, onDelete }: PostProps) => {
 
       const updatedPost = await response.json();
       setComments(updatedPost.comments);
-      setNewComment(""); // Clear the input
+      setNewComment("");
     } catch (error) {
       console.error("Error commenting on post", error);
     }
   };
+
   const handleDelete = async () => {
     try {
       const response = await fetch(`/api/posts/${post._id}`, {
@@ -71,7 +71,7 @@ const Post = ({ post, onDelete }: PostProps) => {
       });
 
       if (response.ok) {
-        onDelete(post._id); // Notify parent component to remove the post from the list
+        onDelete(post._id);
       } else {
         console.error("Failed to delete post");
       }
@@ -81,37 +81,40 @@ const Post = ({ post, onDelete }: PostProps) => {
   };
 
   return (
-    <div className="bg-white shadow-md rounded-lg overflow-hidden mb-6">
+    <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
       {/* Post Image */}
-      {/* <div className="w-full h-64 bg-gray-200">
-        <img
-          src={post.imageUrl}
-          alt="Post"
-          className="object-cover w-full h-full"
-        />
-      </div> */}
+      {post.imageUrl && (
+        <div className="w-full h-64">
+          <img
+            src={post.imageUrl}
+            alt="Post"
+            className="object-cover w-full h-full"
+          />
+        </div>
+      )}
 
       {/* Post Content */}
       <div className="p-4">
-        {/* New Title Field */}
-        <h2 className="text-xl font-bold mb-2">{post.title}</h2>
-        <p className="text-neutral text-lg mb-2">{post.caption}</p>
-        <p className="text-neutral text-sm mb-2">
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="text-xl font-semibold">{post.title}</h2>
+          <span className="text-sm text-gray-500">{likes} Likes</span>
+        </div>
+        <p className="text-gray-700 mb-2">{post.caption}</p>
+        <p className="text-gray-500 text-xs mb-2">
           Hot Dogs Consumed: {post.hotDogsConsumed}
         </p>
-        {/* Display the poster's name */}
         {posterName && (
-          <p className="text-neutral text-sm mb-2">Posted by: {posterName}</p>
+          <p className="text-gray-500 text-xs mb-4">Posted by: {posterName}</p>
         )}
 
         {/* Like Button */}
         <button
           onClick={handleLike}
-          className="flex items-center text-bittersweet hover:text-light-green transition-colors duration-200"
+          className="text-bittersweet hover:text-light-green transition-colors duration-200"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 mr-1"
+            className="h-5 w-5 inline-block mr-1"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -123,13 +126,12 @@ const Post = ({ post, onDelete }: PostProps) => {
               d="M5 15l7-7 7 7"
             />
           </svg>
-          {likes} Likes
+          Like
         </button>
 
         {/* Comments Section */}
         <div className="mt-4">
-          <h3 className="text-lg font-semibold text-neutral mb-2">Comments</h3>
-
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">Comments</h3>
           {comments.map((comment: any, idx: number) => (
             <div
               key={idx}
@@ -156,6 +158,7 @@ const Post = ({ post, onDelete }: PostProps) => {
             </button>
           </form>
         </div>
+
         {/* Delete Button */}
         {post.userId === user.uid && (
           <button
