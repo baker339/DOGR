@@ -57,7 +57,12 @@ export default function Leaderboard() {
       const leaderboardData = users.map((user) => {
         const hotDogsConsumed = posts
           .filter((post) => post.userId === user.userId)
-          .reduce((sum, post) => sum + post.hotDogsConsumed, 0);
+          .reduce(
+            (sum: number, post) =>
+              parseInt(sum.toString()) +
+              parseInt(post.hotDogsConsumed.toString()),
+            0
+          );
         return { user, hotDogsConsumed };
       });
 

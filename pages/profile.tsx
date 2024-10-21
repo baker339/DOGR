@@ -16,11 +16,13 @@ export default function Profile() {
     try {
       const response = await fetch(`/api/posts?userId=${user.uid}`);
       const data = await response.json();
-      setPosts(data.filter((p: PostModel) => p.userId === user.uid));
+      const userData = data.filter((p: PostModel) => p.userId === user.uid);
+      setPosts(userData);
 
       // Calculate the number of dogs consumed from the posts
-      const totalDogs = data.reduce(
-        (acc: number, post: PostModel) => acc + post.hotDogsConsumed,
+      const totalDogs = userData.reduce(
+        (acc: number, post: PostModel) =>
+          parseInt(acc.toString()) + parseInt(post.hotDogsConsumed.toString()),
         0
       );
       setDogCount(totalDogs);
@@ -29,6 +31,11 @@ export default function Profile() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDeletePost = (postId: string) => {
+    // Filter out the deleted post from the list
+    setPosts(posts.filter((post) => post._id.toString() !== postId));
   };
 
   useEffect(() => {
@@ -59,7 +66,11 @@ export default function Profile() {
         style={{ height: "400px", width: "100%" }}
         totalCount={posts.length}
         itemContent={(index) => (
-          <Post key={posts[index]._id.toString()} post={posts[index]} />
+          <Post
+            key={posts[index]._id.toString()}
+            post={posts[index]}
+            onDelete={handleDeletePost}
+          />
         )}
       />
     </div>
