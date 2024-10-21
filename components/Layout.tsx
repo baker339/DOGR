@@ -22,11 +22,27 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div className="flex flex-col min-h-screen bg-light-green">
       {/* Top Bar */}
       <header className="fixed top-0 w-full bg-primary text-white p-4 shadow-lg z-50">
-        <div
-          className="text-center font-bold text-2xl cursor-pointer"
-          onClick={() => router.push("/dashboard")}
-        >
-          DOGR
+        <div className="flex justify-between items-center">
+          {/* Empty First Column */}
+          <div className="w-1/3"></div>
+
+          {/* Centered DOGR */}
+          <div
+            className="w-1/3 text-center font-bold text-2xl cursor-pointer"
+            onClick={() => router.push("/dashboard")}
+          >
+            DOGR
+          </div>
+
+          {/* Right-Aligned Profile Icon */}
+          <div className="w-1/3 flex justify-end items-center">
+            <div
+              className="cursor-pointer"
+              onClick={() => router.push("/profile")}
+            >
+              <FaUser className="w-6 h-6" />
+            </div>
+          </div>
         </div>
       </header>
 
@@ -56,13 +72,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               onClick={() => router.push("/leaderboard")}
             >
               <FaMedal className="w-6 h-6" />
-            </div>
-
-            <div
-              className="flex flex-col items-center cursor-pointer"
-              onClick={() => router.push("/profile")}
-            >
-              <FaUser className="w-6 h-6" />
             </div>
           </div>
         </nav>
