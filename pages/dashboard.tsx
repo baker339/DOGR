@@ -51,7 +51,7 @@ export default function Dashboard() {
         {/* Recent Posts */}
         <section className="w-full max-w-4xl">
           <Virtuoso
-            style={{ height: "calc(100vh - 200px)" }} // Adjust height based on your layout
+            style={{ height: "100vh" }} // Adjust height based on your layout
             totalCount={posts.length}
             itemContent={(index) => {
               const post = posts[index];
