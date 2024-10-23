@@ -1,11 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
+import { withErrorHandling } from "@/middleware/errorMiddleware";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
 
   const client = await clientPromise;
@@ -29,3 +27,5 @@ export default async function handler(
 
   return res.status(405).json({ message: "Method not allowed" });
 }
+
+export default withErrorHandling(handler);

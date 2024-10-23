@@ -1,6 +1,7 @@
 // pages/api/users/[userId].ts
 import clientPromise from "@/lib/mongodb"; // Adjust the import according to your structure
 import { NextApiRequest, NextApiResponse } from "next";
+import { withErrorHandling } from "@/middleware/errorMiddleware";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { userId } = req.query;
@@ -43,4 +44,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default handler;
+export default withErrorHandling(handler);

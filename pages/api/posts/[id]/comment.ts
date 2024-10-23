@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ObjectId } from "mongodb";
 import clientPromise from "@/lib/mongodb";
+import { withErrorHandling } from "@/middleware/errorMiddleware";
 
 interface Comment {
   userId: string;
@@ -8,10 +9,7 @@ interface Comment {
   createdAt: Date;
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
   const { id } = req.query; // Post ID
   const { userId, text } = req.body; // User who commented and the comment text
@@ -55,3 +53,5 @@ export default async function handler(
     res.status(405).end(`Method ${method} Not Allowed`);
   }
 }
+
+export default withErrorHandling(handler);

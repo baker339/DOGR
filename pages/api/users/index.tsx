@@ -2,11 +2,9 @@
 
 import clientPromise from "@/lib/mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
+import { withErrorHandling } from "@/middleware/errorMiddleware";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const client = await clientPromise;
     const db = client.db("dogrdb"); // Replace with your actual database name
@@ -26,3 +24,5 @@ export default async function handler(
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
+
+export default withErrorHandling(handler);

@@ -1,6 +1,6 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function NewPost() {
   const { user, loading } = useAuth();
@@ -13,6 +13,8 @@ export default function NewPost() {
   });
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [showWarningModal, setShowWarningModal] = useState(false); // Modal state
+  const formRef = useRef<HTMLFormElement | null>(null); // Form ref for programmatic submission
   const router = useRouter();
 
   const handlePostChange = (
@@ -24,6 +26,14 @@ export default function NewPost() {
 
   const handlePostSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (newPost.hotDogsConsumed === 0 && !showWarningModal) {
+      setShowWarningModal(true);
+      return;
+    }
+
+    // Proceed with the form submission
+    setShowWarningModal(false);
     let imageUrl = "";
     try {
       if (image) {
@@ -47,16 +57,16 @@ export default function NewPost() {
 
         const data = await response.json();
         imageUrl = data.data.link;
-
-        await fetch("/api/posts", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ userId: user.uid, ...newPost, imageUrl }),
-        });
-        router.push("/dashboard");
       }
+
+      await fetch("/api/posts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: user.uid, ...newPost, imageUrl }),
+      });
+      router.push("/dashboard");
     } catch (error) {
       console.log({ error });
     }
@@ -86,6 +96,15 @@ export default function NewPost() {
     }
   };
 
+  const handleModalProceed = () => {
+    setShowWarningModal(false);
+
+    // Trigger form submission programmatically
+    if (formRef.current) {
+      formRef.current.requestSubmit();
+    }
+  };
+
   useEffect(() => {
     if (!loading && !user) {
       router.push("/login");
@@ -100,9 +119,38 @@ export default function NewPost() {
 
   return (
     <div>
+      {/* Warning Modal */}
+      {showWarningModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm">
+            <h2 className="text-lg font-semibold mb-4">
+              Post with 0 Hot Dogs Consumed?
+            </h2>
+            <p className="mb-6">
+              Are you sure you want to post with 0 hot dogs consumed? You might
+              get hungry later!
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
+                onClick={() => setShowWarningModal(false)} // Close modal
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                onClick={handleModalProceed} // Proceed with form submission
+              >
+                Proceed
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <section className="bg-white p-6 rounded-lg shadow-md w-full max-w-xl mb-8">
         <h2 className="text-xl font-semibold mb-4">Create a New Post</h2>
-        <form onSubmit={handlePostSubmit} className="space-y-4">
+        <form ref={formRef} onSubmit={handlePostSubmit} className="space-y-4">
           <input
             type="text"
             name="title"
