@@ -11,9 +11,14 @@ interface ErrorDetails {
 }
 
 // Function to log the error to the database
-async function logErrorToDatabase(errorDetails: ErrorDetails): Promise<void> {
+async function logErrorToDatabase(
+  req: NextApiRequest,
+  errorDetails: ErrorDetails
+): Promise<void> {
   try {
-    await fetch("/api/logError", {
+    // Get base URL from the request headers
+    const baseUrl = req.headers.origin || `http://${req.headers.host}`;
+    await fetch(`${baseUrl}/api/logError`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -28,19 +33,21 @@ async function logErrorToDatabase(errorDetails: ErrorDetails): Promise<void> {
 // Middleware to wrap API handlers and handle errors
 export function withErrorHandling(handler: NextApiHandler) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
+    console.log("Here");
     try {
       // Execute the original handler
       return await handler(req, res);
     } catch (error) {
       // Log the error
+      console.log("There");
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
       const errorStack = error instanceof Error ? error.stack : undefined;
 
-      await logErrorToDatabase({
+      await logErrorToDatabase(req, {
         error: errorMessage,
         stack: errorStack,
-        location: req.url || "unknown",
+        location: req?.url || "unknown",
         context: "API Route",
         userId: req.headers?.["user-id"]?.toString() || null, // Example of getting user ID if passed in headers
       });

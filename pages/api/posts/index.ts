@@ -38,7 +38,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         await db.collection("posts").insertOne(newPost); // Insert new post
         res.status(201).json(newPost);
       } catch (error) {
-        res.status(500).json({ message: "Error creating post" });
+        res.status(500).json({ message: "Error creating post", error });
       }
       break;
 
