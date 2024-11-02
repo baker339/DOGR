@@ -1,22 +1,39 @@
 // pages/profile.tsx
-
-import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
 import { Virtuoso } from "react-virtuoso"; // You need to install react-virtuoso
 import Post from "@/components/Post";
 import { Post as PostModel } from "@/models/Post";
+import { useRouter } from "next/router";
+
+interface User {
+  userId: string;
+  name: string;
+}
 
 export default function Profile() {
-  const { user, logout } = useAuth();
+  const router = useRouter();
+  const { userId } = router.query;
+  const [user, setUser] = useState<User>({ userId: "", name: "" });
   const [posts, setPosts] = useState<PostModel[]>([]);
   const [dogCount, setDogCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  const fetchUser = async () => {
+    try {
+      const response = await fetch(`/api/users`);
+      const data = await response.json();
+      setUser(data.filter((u: any) => u.userId === userId)[0]);
+    } catch (error) {
+      console.error("Failed to fetch user", error);
+    }
+  };
+
   const fetchUserPosts = async () => {
     try {
-      const response = await fetch(`/api/posts?userId=${user.uid}`);
+      await fetchUser();
+      const response = await fetch(`/api/posts?userId=${userId}`);
       const data = await response.json();
-      const userData = data.filter((p: PostModel) => p.userId === user.uid);
+      const userData = data.filter((p: PostModel) => p.userId === userId);
       setPosts(userData);
 
       // Calculate the number of dogs consumed from the posts
@@ -39,10 +56,8 @@ export default function Profile() {
   };
 
   useEffect(() => {
-    if (user) {
-      fetchUserPosts();
-    }
-  }, [user]);
+    fetchUserPosts();
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -51,15 +66,9 @@ export default function Profile() {
   return (
     <div className="flex flex-col items-center p-6 bg-white">
       <h1 className="text-3xl font-bold mb-4">Profile</h1>
-      <p className="text-lg mb-2">Name: {user.displayName}</p>
+      <p className="text-lg mb-2">Name: {user?.name ?? ""}</p>
       <p className="text-lg mb-2">Posts: {posts.length}</p>
       <p className="text-lg mb-4">Total Hot Dogs Consumed: {dogCount}</p>
-      <button
-        onClick={logout}
-        className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-600 mb-4"
-      >
-        Logout
-      </button>
 
       <h2 className="text-xl font-semibold mb-2">My Posts</h2>
       <Virtuoso

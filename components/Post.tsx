@@ -1,4 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 interface PostProps {
@@ -8,6 +9,7 @@ interface PostProps {
 
 const Post = ({ post, onDelete }: PostProps) => {
   const { user } = useAuth();
+  const router = useRouter();
   const [likes, setLikes] = useState(post?.likes?.length ?? 0);
   const [comments, setComments] = useState(post?.comments ?? []);
   const [newComment, setNewComment] = useState("");
@@ -109,13 +111,40 @@ const Post = ({ post, onDelete }: PostProps) => {
     }
   };
 
+  // Function to navigate to the user's profile page if not already there
+  const goToProfile = () => {
+    if (!router.pathname.startsWith("/profile")) {
+      if (post.userId !== user.uid) {
+        router.push(`/profile/${post.userId}`);
+      } else {
+        router.push(`/profile`);
+      }
+    }
+  };
+
+  // Function to navigate to the user's profile page if not already there
+  const goToProfileFromComment = (userId: string) => {
+    if (!router.pathname.startsWith("/profile")) {
+      if (userId !== user.uid) {
+        router.push(`/profile/${userId}`);
+      } else {
+        router.push(`/profile`);
+      }
+    }
+  };
+
   return (
     <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
       {/* Post Header */}
       <div className="flex justify-between items-center p-4 border-b bg-gray-50 shadow-sm">
         <div className="flex items-center">
           {posterName && (
-            <p className="font-semibold text-lg text-gray-800">{posterName}</p>
+            <p
+              className="font-semibold text-lg text-gray-800"
+              onClick={goToProfile}
+            >
+              {posterName}
+            </p>
           )}
         </div>
         {/* Three Dots Dropdown */}
@@ -204,7 +233,10 @@ const Post = ({ post, onDelete }: PostProps) => {
               className="bg-light-green p-2 rounded-lg mb-2 text-gray-900"
             >
               <p>
-                <span className="font-semibold">
+                <span
+                  className="font-semibold"
+                  onClick={() => goToProfileFromComment(comment.userId)}
+                >
                   {commenterNames[comment.userId] || "Unknown"}:
                 </span>{" "}
                 {comment.text}

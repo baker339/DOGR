@@ -39,7 +39,6 @@ export function withErrorHandling(handler: NextApiHandler) {
       return await handler(req, res);
     } catch (error) {
       // Log the error
-      console.log("There");
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
       const errorStack = error instanceof Error ? error.stack : undefined;
