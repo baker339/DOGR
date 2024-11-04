@@ -1,7 +1,6 @@
 // pages/profile.tsx
 
 import { useEffect, useState } from "react";
-import { Virtuoso } from "react-virtuoso"; // You need to install react-virtuoso
 import Post from "@/components/Post";
 import { Post as PostModel } from "@/models/Post";
 import { useRouter } from "next/router";
@@ -152,18 +151,18 @@ export default function Profile() {
       </div>
 
       {/* User Posts Section */}
-      <h2 className="text-xl font-semibold mb-2">My Posts</h2>
-      <Virtuoso
-        style={{ height: "400px", width: "100%" }}
-        totalCount={posts.length}
-        itemContent={(index) => (
-          <Post
-            key={posts[index]._id.toString()}
-            post={posts[index]}
-            onDelete={handleDeletePost}
-          />
-        )}
-      />
+      <h2 className="text-xl font-semibold mb-2">User Posts</h2>
+      <div style={{ width: "100%" }}>
+        {posts.map((post) => {
+          return (
+            <Post
+              key={post._id.toString()}
+              post={post}
+              onDelete={handleDeletePost}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }

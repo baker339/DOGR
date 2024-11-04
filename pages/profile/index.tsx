@@ -2,14 +2,12 @@
 
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
-import { Virtuoso } from "react-virtuoso"; // You need to install react-virtuoso
 import Post from "@/components/Post";
 import { Post as PostModel } from "@/models/Post";
 import { useRouter } from "next/router";
 
 export default function Profile() {
   const router = useRouter();
-  const { userId } = router.query;
   const { user, logout } = useAuth();
   const [posts, setPosts] = useState<PostModel[]>([]);
   const [dogCount, setDogCount] = useState(0);
@@ -108,17 +106,17 @@ export default function Profile() {
 
       {/* User Posts Section */}
       <h2 className="text-xl font-semibold mb-2">My Posts</h2>
-      <Virtuoso
-        style={{ height: "400px", width: "100%" }}
-        totalCount={posts.length}
-        itemContent={(index) => (
-          <Post
-            key={posts[index]._id.toString()}
-            post={posts[index]}
-            onDelete={handleDeletePost}
-          />
-        )}
-      />
+      <div style={{ width: "100%" }}>
+        {posts.map((post) => {
+          return (
+            <Post
+              key={post._id.toString()}
+              post={post}
+              onDelete={handleDeletePost}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }

@@ -15,36 +15,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         // 1. Fetch the current user's follow list
         const user = await db.collection("users").findOne({ userId });
         const followingIds = user?.following || [];
-        // let postIds = [];
-
-        // // 2. Get posts from followed users
-        // const followedPosts = await db
-        //   .collection("posts")
-        //   .find({ userId: { $in: followingIds } })
-        //   .sort({ createdAt: -1 })
-        //   .limit(20)
-        //   .toArray();
-
-        // postIds.push(...followedPosts.map((x) => x._id));
-
-        // // 3. Fetch some random posts for discovery (exclude followed users' posts)
-        // const additionalPosts = await db
-        //   .collection("posts")
-        //   .aggregate([
-        //     { $match: { userId: { $nin: followingIds } } },
-        //     { $sample: { size: 5 } },
-        //   ])
-        //   .toArray();
-
-        // postIds.push(...additionalPosts.map((x) => x._id));
-
-        // const restOfPosts = await db
-        //   .collection("posts")
-        //   .aggregate([{ $match: { _id: { $nin: postIds } } }])
-        //   .toArray();
-
-        // // 4. Combine and return the posts
-        // const posts = [...followedPosts, ...additionalPosts, ...restOfPosts];
 
         // 1. Fetch posts from followed users with pagination
         const followedPosts = await db
