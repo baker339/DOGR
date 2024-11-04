@@ -30,7 +30,7 @@ export default function Dashboard() {
   const fetchPosts = async () => {
     try {
       const res = await fetch(
-        `/api/posts?userId${user.uid}&limit=${limit}&skip=${page * limit}`
+        `/api/posts?userId=${user.uid}&limit=${limit}&skip=${page * limit}`
       );
       const newPosts = await res.json();
 
