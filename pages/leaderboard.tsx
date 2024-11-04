@@ -157,7 +157,9 @@ export default function Leaderboard() {
                   {index + 1}
                 </td>
                 <td className="p-2">{entry.user.name}</td>
-                <td className="p-2">{entry.hotDogsConsumed}</td>
+                <td className="p-2">
+                  {parseInt(entry.hotDogsConsumed.toString())}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -191,7 +193,9 @@ export default function Leaderboard() {
                   {index + 1}
                 </td>
                 <td className="p-2">{entry.user.name}</td>
-                <td className="p-2">{entry.hotDogsConsumed}</td>
+                <td className="p-2">
+                  {parseInt(entry.hotDogsConsumed.toString())}
+                </td>
               </tr>
             ))}
           </tbody>
