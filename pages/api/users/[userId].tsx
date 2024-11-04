@@ -12,10 +12,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     if (req.method === "GET") {
       // Check if the user exists
-      const user = await db.collection("users").findOne({ userId });
+      const profileUser = await db.collection("users").findOne({ userId });
+      // Check if the current user follows the profile user
 
-      if (user) {
-        return res.status(200).json(user); // User exists
+      if (profileUser) {
+        return res.status(200).json(profileUser); // User exists
       } else {
         return res.status(404).json({ message: "User not found" }); // User does not exist
       }

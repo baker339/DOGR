@@ -16,6 +16,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       userId: user.userId,
       name: user.name,
       hotdogsEaten: user.hotdogsEaten || 0, // Default to 0 if not present
+      followers: user.followers || [],
+      following: user.following || [],
     }));
 
     res.status(200).json(formattedUsers);

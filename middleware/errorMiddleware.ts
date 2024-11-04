@@ -33,7 +33,6 @@ async function logErrorToDatabase(
 // Middleware to wrap API handlers and handle errors
 export function withErrorHandling(handler: NextApiHandler) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
-    console.log("Here");
     try {
       // Execute the original handler
       return await handler(req, res);
