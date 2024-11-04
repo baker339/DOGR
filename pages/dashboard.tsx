@@ -1,8 +1,6 @@
 import Post from "@/components/Post";
 import { useAuth } from "../hooks/useAuth";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Virtuoso } from "react-virtuoso";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 interface Post {
