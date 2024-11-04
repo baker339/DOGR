@@ -2,6 +2,7 @@ import Post from "@/components/Post";
 import { useAuth } from "../hooks/useAuth";
 import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
+import AdCode from "@/components/AdCode";
 
 interface Post {
   _id: string;
@@ -75,9 +76,18 @@ export default function Dashboard() {
             loader={<h4>Loading...</h4>} // Loader while fetching
             endMessage={<p>You've reached the end!</p>} // Message when all posts are loaded
           >
-            {posts.map((post) => (
-              <Post key={post._id} post={post} onDelete={handleDeletePost} />
-            ))}
+            {posts.map((post, index) => {
+              return (
+                <span key={index}>
+                  {index % 3 === 0 && index !== 0 && <AdCode />}
+                  <Post
+                    key={post._id}
+                    post={post}
+                    onDelete={handleDeletePost}
+                  />
+                </span>
+              );
+            })}
           </InfiniteScroll>
         </section>
       </main>

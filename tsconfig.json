@@ -16,6 +16,12 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "components/AdBanner.jsx",
+    "components/InFeedAd.jsx"
+  ],
   "exclude": ["node_modules"]
 }
