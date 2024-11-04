@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { FaMedal, FaTrophy } from "react-icons/fa"; // Importing icons
+import { FaMedal, FaTrophy } from "react-icons/fa";
 
 interface User {
   _id: string;
   userId: string;
   name: string;
+  following?: string[]; // Include following users
 }
 
 interface Post {
@@ -29,15 +30,17 @@ export default function Leaderboard() {
   const [leaderboard, setLeaderboard] = useState<
     { user: User; hotDogsConsumed: number }[]
   >([]);
+  const [followedLeaderboard, setFollowedLeaderboard] = useState<
+    { user: User; hotDogsConsumed: number }[]
+  >([]);
   const [filterType, setFilterType] = useState<FilterType>(
     FilterType.YEAR_TO_DATE
   );
 
-  // Fetch users and posts when component mounts
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const userResponse = await fetch("/api/users"); // Adjust this endpoint if necessary
+        const userResponse = await fetch("/api/users");
         const usersData = await userResponse.json();
         setUsers(usersData);
       } catch (error) {
@@ -47,7 +50,7 @@ export default function Leaderboard() {
 
     const fetchPosts = async () => {
       try {
-        const postResponse = await fetch("/api/posts"); // Fetch the posts data
+        const postResponse = await fetch("/api/posts");
         const postsData = await postResponse.json();
         setPosts(postsData);
       } catch (error) {
@@ -61,61 +64,60 @@ export default function Leaderboard() {
     }
   }, [user, loading]);
 
-  // Update leaderboard when users and posts are fetched
   useEffect(() => {
     if (users.length > 0 && posts.length > 0) {
-      let filteredPosts: Post[];
-      switch (filterType) {
-        case FilterType.YEAR_TO_DATE:
-          filteredPosts = posts.filter((post) => {
+      const filteredPosts = posts.filter((post) => {
+        switch (filterType) {
+          case FilterType.YEAR_TO_DATE:
             return (
               new Date(post.createdAt).getFullYear() ===
               new Date().getFullYear()
             );
-          });
-          break;
-        case FilterType.MONTH_TO_DATE:
-          filteredPosts = posts.filter(
-            (post) =>
-              new Date(post.createdAt).getFullYear() ===
-                new Date().getFullYear() &&
-              new Date(post.createdAt).getMonth() === new Date().getMonth()
-          );
-          break;
-        default:
-          filteredPosts = posts;
-          break;
-      }
+          case FilterType.MONTH_TO_DATE:
+            const now = new Date();
+            return (
+              new Date(post.createdAt).getFullYear() === now.getFullYear() &&
+              new Date(post.createdAt).getMonth() === now.getMonth()
+            );
+          default:
+            return true;
+        }
+      });
+
       const leaderboardData = users.map((user) => {
         const hotDogsConsumed = filteredPosts
           .filter((post) => post.userId === user.userId)
-          .reduce(
-            (sum: number, post) =>
-              parseInt(sum.toString()) +
-              parseInt(post.hotDogsConsumed.toString()),
-            0
-          );
+          .reduce((sum, post) => sum + post.hotDogsConsumed, 0);
         return { user, hotDogsConsumed };
       });
 
-      // Sort the leaderboard by hotDogsConsumed in descending order
       const sortedLeaderboard = leaderboardData.sort(
         (a, b) => b.hotDogsConsumed - a.hotDogsConsumed
       );
+
+      // Include the current user and followed users in the followed leaderboard
+      const followedUsersIds =
+        users?.filter((u) => u.userId === user.uid)[0].following || [];
+      const followedUsersSet = new Set(followedUsersIds);
+
+      const followedLeaderboardData = sortedLeaderboard.filter((entry) => {
+        return (
+          entry.user.userId === user.uid ||
+          followedUsersSet.has(entry.user.userId)
+        );
+      });
+
       setLeaderboard(sortedLeaderboard);
+      setFollowedLeaderboard(followedLeaderboardData);
     }
-  }, [users, posts, filterType]);
+  }, [users, posts, filterType, user?.following]);
 
-  if (loading) {
-    return <div>Loading...</div>; // Show a loading spinner or message while auth is loading
-  }
-
-  if (!user) return null; // If the user is not logged in and not loading, prevent rendering
+  if (loading) return <div>Loading...</div>;
+  if (!user) return null;
 
   return (
     <div className="flex flex-col min-h-screen bg-background p-4">
       <h1 className="text-3xl font-bold mb-6">Leaderboard</h1>
-      {/* Filter Selection */}
       <div className="mb-4">
         <select
           value={filterType}
@@ -127,35 +129,74 @@ export default function Leaderboard() {
           <option value={FilterType.ALL_TIME}>All Time</option>
         </select>
       </div>
-      <table className="w-full table-auto">
-        <thead>
-          <tr className="text-left bg-gray-200">
-            <th className="p-2">Rank</th>
-            <th className="p-2">User</th>
-            <th className="p-2">Hotdogs Eaten</th>
-          </tr>
-        </thead>
-        <tbody>
-          {leaderboard.map((entry, index) => (
-            <tr key={entry.user._id} className="border-b">
-              <td className="p-2">
-                {index === 0 && (
-                  <FaTrophy className="inline mr-1 text-yellow-500" />
-                )}
-                {index === 1 && (
-                  <FaMedal className="inline mr-1 text-gray-500" />
-                )}
-                {index === 2 && (
-                  <FaMedal className="inline mr-1 text-gray-400" />
-                )}
-                {index + 1}
-              </td>
-              <td className="p-2">{entry.user.name}</td>
-              <td className="p-2">{entry.hotDogsConsumed}</td>
+
+      {/* Followed Users Leaderboard */}
+      <section className="mb-6">
+        <h2 className="text-2xl font-semibold mb-4">Your Circle</h2>
+        <table className="w-full table-auto mb-4">
+          <thead>
+            <tr className="text-left bg-gray-200">
+              <th className="p-2">Rank</th>
+              <th className="p-2">User</th>
+              <th className="p-2">Hotdogs Eaten</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {followedLeaderboard.map((entry, index) => (
+              <tr key={entry.user._id} className="border-b">
+                <td className="p-2">
+                  {index === 0 && (
+                    <FaTrophy className="inline mr-1 text-yellow-500" />
+                  )}
+                  {index === 1 && (
+                    <FaMedal className="inline mr-1 text-gray-500" />
+                  )}
+                  {index === 2 && (
+                    <FaMedal className="inline mr-1 text-gray-400" />
+                  )}
+                  {index + 1}
+                </td>
+                <td className="p-2">{entry.user.name}</td>
+                <td className="p-2">{entry.hotDogsConsumed}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+
+      {/* Global Leaderboard */}
+      <section>
+        <h2 className="text-2xl font-semibold mb-4">Global Leaderboard</h2>
+        <table className="w-full table-auto">
+          <thead>
+            <tr className="text-left bg-gray-200">
+              <th className="p-2">Rank</th>
+              <th className="p-2">User</th>
+              <th className="p-2">Hotdogs Eaten</th>
+            </tr>
+          </thead>
+          <tbody>
+            {leaderboard.map((entry, index) => (
+              <tr key={entry.user._id} className="border-b">
+                <td className="p-2">
+                  {index === 0 && (
+                    <FaTrophy className="inline mr-1 text-yellow-500" />
+                  )}
+                  {index === 1 && (
+                    <FaMedal className="inline mr-1 text-gray-500" />
+                  )}
+                  {index === 2 && (
+                    <FaMedal className="inline mr-1 text-gray-400" />
+                  )}
+                  {index + 1}
+                </td>
+                <td className="p-2">{entry.user.name}</td>
+                <td className="p-2">{entry.hotDogsConsumed}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
     </div>
   );
 }
