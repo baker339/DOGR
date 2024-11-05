@@ -15,7 +15,9 @@ export default function Login() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-background">
-      <h1 className="text-3xl font-bold mb-6 text-primary">Welcome to DOGR</h1>
+      <h1 className="text-3xl font-bold mb-6 text-primary">
+        Welcome to HotDogity
+      </h1>
       <p className="mb-4 text-neutral">
         Log in to post your favorite hot dogs!
       </p>

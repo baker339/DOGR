@@ -69,7 +69,7 @@ export default function Profile() {
         <div className="flex flex-col items-center mb-4">
           <div className="w-24 h-24 rounded-full bg-gray-300 flex items-center justify-center">
             {/* Placeholder for user profile icon */}
-            <span className="text-4xl text-gray-500">👤</span>
+            <span className="text-4xl text-gray-500">🌭</span>
           </div>
           <h1 className="text-2xl font-bold mt-2">{user.displayName}</h1>
         </div>

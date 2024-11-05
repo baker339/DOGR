@@ -31,7 +31,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             className="w-1/3 text-center font-bold text-2xl cursor-pointer"
             onClick={() => router.push("/dashboard")}
           >
-            DOGR
+            HotDogity
             {/* <svg
               id="Layer_1"
               data-name="Layer 1"

@@ -138,7 +138,7 @@ export default function Leaderboard() {
             <tr className="text-left bg-gray-200">
               <th className="p-2">Rank</th>
               <th className="p-2">User</th>
-              <th className="p-2">Hotdogs Eaten</th>
+              <th className="p-2">Hot Dogs Eaten</th>
             </tr>
           </thead>
           <tbody>
@@ -174,7 +174,7 @@ export default function Leaderboard() {
             <tr className="text-left bg-gray-200">
               <th className="p-2">Rank</th>
               <th className="p-2">User</th>
-              <th className="p-2">Hotdogs Eaten</th>
+              <th className="p-2">Hot Dogs Eaten</th>
             </tr>
           </thead>
           <tbody>
