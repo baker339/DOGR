@@ -192,7 +192,6 @@ export default function NewPost() {
             value={newPost.caption}
             onChange={handlePostChange}
             className="w-full p-2 border border-light-neutral rounded-lg focus:border-emerald focus:outline-none"
-            required
           />
           <div>Hot Dogs Consumed</div>
           <input
