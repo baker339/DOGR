@@ -5,6 +5,7 @@ import { useRouter } from "next/router"; // Importing useRouter from Next.js
 import { FaHome, FaPlusCircle, FaUser, FaMedal } from "react-icons/fa"; // Importing icons from react-icons
 import { useAuth } from "@/hooks/useAuth";
 import Login from "@/pages/login";
+import Image from "next/image";
 
 interface LayoutProps {
   children: ReactNode;
@@ -28,10 +29,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
           {/* Centered DOGR */}
           <div
-            className="w-1/3 text-center font-bold text-2xl cursor-pointer"
+            className="w-1/3 text-center font-bold text-2xl cursor-pointer justify-items-center"
             onClick={() => router.push("/dashboard")}
           >
-            HotDogity
+            {/* HotDogity */}
+            <Image
+              src={"/HotDogityLogo3.png"}
+              alt="HotDogity Logo"
+              width={100}
+              height={100}
+            />
             {/* <svg
               id="Layer_1"
               data-name="Layer 1"
