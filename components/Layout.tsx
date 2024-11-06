@@ -22,10 +22,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="flex flex-col min-h-screen bg-light-green">
       {/* Top Bar */}
-      <header className="fixed top-0 w-full bg-primary text-white p-4 shadow-lg z-50">
+      <header className="fixed top-0 w-full bg-primary text-white p-1 pl-5 pr-5 shadow-lg z-50">
         <div className="flex justify-between items-center">
           {/* Empty First Column */}
-          <div className="w-1/3"></div>
+          <div className="w-1/3">
+            <Image
+              src={"/HotDogityDogLogoTransparent.png"}
+              alt="HotDogityDogLogo"
+              width={50}
+              height={50}
+            />
+          </div>
 
           {/* Centered DOGR */}
           <div

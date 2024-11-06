@@ -157,11 +157,11 @@ export default function NewPost() {
             placeholder="Title"
             value={newPost.title}
             onChange={handlePostChange}
-            className="w-full p-2 border border-light-neutral rounded-lg focus:border-emerald focus:outline-none"
+            className="w-full p-2 border border-light-neutral rounded-lg focus:border-accentLight focus:outline-none"
             required
           />
           {/* Custom File Input Button */}
-          <label className="flex items-center justify-center w-full cursor-pointer bg-primary text-white py-2 rounded-lg hover:bg-secondary transition">
+          <label className="flex items-center justify-center w-full cursor-pointer bg-highlight text-white py-2 rounded-lg hover:bg-accentLight transition">
             {!imagePreview ? "Upload Hot Dog Image" : "Choose different Image"}
             <input
               type="file"
@@ -191,7 +191,7 @@ export default function NewPost() {
             placeholder="Caption"
             value={newPost.caption}
             onChange={handlePostChange}
-            className="w-full p-2 border border-light-neutral rounded-lg focus:border-emerald focus:outline-none"
+            className="w-full p-2 border border-light-neutral rounded-lg focus:border-accentLight focus:outline-none"
           />
           <div>Hot Dogs Consumed</div>
           <input
@@ -200,12 +200,12 @@ export default function NewPost() {
             placeholder="Number of Hot Dogs Consumed"
             value={newPost.hotDogsConsumed}
             onChange={handlePostChange}
-            className="w-full p-2 border border-light-neutral rounded-lg focus:border-emerald focus:outline-none"
+            className="w-full p-2 border border-light-neutral rounded-lg focus:border-accentLight focus:outline-none"
             required
           />
           <button
             type="submit"
-            className="w-full bg-primary text-white py-2 rounded-lg hover:bg-secondary transition"
+            className="w-full bg-primary text-white py-2 rounded-lg hover:bg-accentLight transition"
           >
             Post
           </button>
