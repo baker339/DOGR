@@ -56,7 +56,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               className="cursor-pointer"
               onClick={() => router.push("/profile")}
             >
-              <FaUser className="w-6 h-6" />
+              <FaUser className="w-6 h-6 text-background hover:text-highlight" />
             </div>
           </div>
         </div>
@@ -73,21 +73,21 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               className="flex flex-col items-center cursor-pointer"
               onClick={() => router.push("/dashboard")}
             >
-              <FaHome className="w-6 h-6" />
+              <FaHome className="w-6 h-6 hover:text-highlight" />
             </div>
 
             <div
               className="flex flex-col items-center cursor-pointer"
               onClick={() => router.push("/new-post")}
             >
-              <FaPlusCircle className="w-6 h-6" />
+              <FaPlusCircle className="w-6 h-6 text-primary hover:text-highlight" />
             </div>
 
             <div
               className="flex flex-col items-center cursor-pointer"
               onClick={() => router.push("/leaderboard")}
             >
-              <FaMedal className="w-6 h-6" />
+              <FaMedal className="w-6 h-6 hover:text-highlight" />
             </div>
           </div>
         </nav>

@@ -136,7 +136,7 @@ const Post = ({ post, onDelete }: PostProps) => {
   return (
     <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
       {/* Post Header */}
-      <div className="flex justify-between items-center p-4 border-b bg-gray-50 shadow-sm">
+      <div className="flex justify-between items-center p-4 border-b bg-gray-100 shadow-sm">
         <div className="flex items-center">
           {posterName && (
             <p
@@ -152,7 +152,7 @@ const Post = ({ post, onDelete }: PostProps) => {
           <div className="relative">
             <button
               onClick={() => setDropdownVisible(!dropdownVisible)}
-              className="text-gray-500 hover:text-gray-800"
+              className="text-gray-500 hover:text-primary"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -205,7 +205,7 @@ const Post = ({ post, onDelete }: PostProps) => {
         {/* Like Button */}
         <button
           onClick={handleLike}
-          className="text-bittersweet hover:text-light-green transition-colors duration-200"
+          className="text-highlight hover:text-accentLight transition-colors duration-200"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -251,11 +251,11 @@ const Post = ({ post, onDelete }: PostProps) => {
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Add a comment..."
-              className="flex-grow bg-gray-100 border border-gray-300 rounded-l-lg p-2 text-neutral placeholder-neutral focus:outline-none focus:border-emerald"
+              className="flex-grow bg-gray-100 border border-gray-300 rounded-l-lg p-2 text-gray-dark placeholder-gray focus:outline-none focus:border-primary"
             />
             <button
               type="submit"
-              className="bg-emerald text-red p-2 rounded-r-lg hover:bg-light-green transition-colors duration-200"
+              className="bg-primary text-white p-2 rounded-r-lg hover:bg-accentLight transition-colors duration-200 h-[2.6rem]"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
