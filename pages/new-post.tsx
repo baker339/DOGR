@@ -27,7 +27,13 @@ export default function NewPost() {
     "Going Public with Your Wiener",
     "Being Frank with Everyone",
     "Dropping Hotdog Pic",
-    "Showing Off the Goods"
+    "Showing Off the Goods",
+    "Rolling Out the Red-Hot",
+    "Giving a Bun’s Eye View",
+    "Letting the dog out",
+    "Presenting the Main Meat",
+    "Dishing Out the Dog",
+    "Serving Up a Hot Pic"
   ]
 
   const handlePostChange = (
