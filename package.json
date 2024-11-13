@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@types/mongodb": "^4.0.7",
+    "browser-image-compression": "^2.0.2",
     "cloudinary": "^2.5.1",
     "firebase": "^10.14.1",
     "mongodb": "^6.9.0",

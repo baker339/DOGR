@@ -185,7 +185,7 @@ const Post = ({ post, onDelete }: PostProps) => {
 
       {/* Post Image */}
       {post.imageUrl && (
-        <div className="w-full h-64">
+        <div className="w-full h-96">
           <img
             src={post.imageUrl}
             alt="Post"
