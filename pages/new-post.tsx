@@ -20,7 +20,7 @@ export default function NewPost() {
   const router = useRouter();
 
   const funnyPostMessages = [
-    "Expose Your Wiener",
+    "Exposing Your Wiener",
     "Sharing Your Snack Stack",
     "Bringing the Bun Fun",
     "Revealing the Frankfurter",
@@ -38,14 +38,14 @@ export default function NewPost() {
   };
 
   const handlePostSubmit = async (e: React.FormEvent) => {
-    setWorking(true);
-    const millisecondPromise = new Promise(resolve => setTimeout(resolve, 3000)); //Posts take at least 3 seconds so you can see the funny message
     e.preventDefault();
 
     if (newPost.hotDogsConsumed === 0 && !showWarningModal) {
       setShowWarningModal(true);
       return;
     }
+    setWorking(true);
+    const millisecondPromise = new Promise(resolve => setTimeout(resolve, 3000)); //Posts take at least 3 seconds so you can see the funny message
 
     // Proceed with the form submission
     setShowWarningModal(false);
