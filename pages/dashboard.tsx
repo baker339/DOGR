@@ -39,7 +39,9 @@ export default function Dashboard() {
         const uniqueNewPosts = newPosts.filter(
           (post: any) => !postIds.has(post._id)
         );
-        return [...prevPosts, ...uniqueNewPosts];
+        const combined = [...prevPosts, ...uniqueNewPosts] as Post[];
+        combined.sort((a, b) => a.createdAt < b.createdAt ? 1 : -1)
+        return combined;
       });
 
       // Update hasMore based on response length
